@@ -1,0 +1,56 @@
+  # Частина 2 (рівень «5»): дописати після останнього сценарію частини 1
+  - name: перезапуск на 12-й хвилині, показань ще не було
+    interval: 15s
+    input_series:
+      - series: 'process_start_time_seconds'
+        values: '720x84'          # процес стартував у момент 720 с
+      - series: 'greenhouse_last_reading_timestamp_seconds'
+        values: '0x84'            # після старту лічильник дорівнює 0
+    alert_rule_test:
+      # без часу старту вік дорівнював би 17 хв, а не 5 хв
+      - {eval_time: 17m, alertname: NoReadings, exp_alerts: []}
+      - eval_time: 18m
+        alertname: NoReadings
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: Жодного показання понад 300 с
+
+  - name: 1 % помилок після 6 год норми, повільна пара
+    interval: 1m
+    input_series:
+      - series: 'greenhouse_http_request_seconds_count{status="200"}'
+        values: '0+100x360 36099+99x280'
+      - series: 'greenhouse_http_request_seconds_count{status="500"}'
+        values: '0x360 1+1x280'
+    alert_rule_test:
+      # t = 216 хв: мовчить за 0,9 t (554-а хв), спрацьовує за 1,2 t
+      - {eval_time: 554m, alertname: ApiBudgetSlowBurn, exp_alerts: []}
+      - eval_time: 620m
+        alertname: ApiBudgetSlowBurn
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: "API витрачає бюджет помилок у 6 разів
+                швидше за норму"
+      # 1 % менше за 14,4 · b: швидка пара не спрацює ніколи
+      - {eval_time: 640m, alertname: ApiBudgetFastBurn, exp_alerts: []}
+
+  - name: помилки тривали 49 хв і припинилися
+    interval: 1m
+    input_series:
+      - series: 'greenhouse_http_request_seconds_count{status="200"}'
+        values: '0+100x360 36098+98x48 40902+100x39'
+      - series: 'greenhouse_http_request_seconds_count{status="500"}'
+        values: '0x360 2+2x48 98x39'
+    alert_rule_test:
+      # 410-а хвилина: годинне й п’ятихвилинне вікна ще над порогом
+      - eval_time: 410m
+        alertname: ApiBudgetFastBurn
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: "API витрачає бюджет помилок у 14,4 раза
+                швидше за норму"
+      # 422-а: п’ятихвилинне вікно чисте, годинне ще ні
+      - {eval_time: 422m, alertname: ApiBudgetFastBurn, exp_alerts: []}

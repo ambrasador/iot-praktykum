@@ -1,0 +1,3 @@
+# Закінчення рядків: LF і в репозиторії, і в робочих копіях (пояснення — у greenhouse-monitor/.gitattributes).
+* text=auto eol=lf
+*.sh text eol=lf

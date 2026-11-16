@@ -1,0 +1,364 @@
+{
+ "id": 2,
+ "code": "V2",
+ "title": "Розумний будинок",
+ "site": "Житловий комплекс на 900 квартир",
+ "topicRoot": "home",
+ "load": {
+  "N": 1800,
+  "m": 3,
+  "T": 120,
+  "model": "burst",
+  "f": 0.7,
+  "tau": 8,
+  "b": 9
+ },
+ "requirements": {
+  "durable": true,
+  "deviceBatch": 3
+ },
+ "dashboard": {
+  "U": 3200,
+  "p": 1,
+  "F": 5
+ },
+ "metrics": [
+  {
+   "id": "co2",
+   "label": "Концентрація CO₂",
+   "unit": "ppm",
+   "kind": "gauge",
+   "periodSec": 120,
+   "range": [
+    0,
+    5000
+   ],
+   "decimals": 0,
+   "gen": {
+    "mean": 620,
+    "sd": 90,
+    "min": 400
+   }
+  },
+  {
+   "id": "motion",
+   "label": "Рух",
+   "unit": "0/1",
+   "kind": "gauge",
+   "periodSec": 120,
+   "range": [
+    0,
+    1
+   ],
+   "decimals": 0,
+   "gen": {
+    "bernoulli": 0.2
+   }
+  },
+  {
+   "id": "door",
+   "label": "Стан дверей",
+   "unit": "0/1",
+   "kind": "gauge",
+   "periodSec": 120,
+   "range": [
+    0,
+    1
+   ],
+   "decimals": 0,
+   "gen": {
+    "bernoulli": 0.05
+   }
+  },
+  {
+   "id": "power_w",
+   "label": "Потужність розетки",
+   "unit": "Вт",
+   "kind": "gauge",
+   "periodSec": 120,
+   "range": [
+    0,
+    3600
+   ],
+   "decimals": 0,
+   "gen": {
+    "mean": 180,
+    "sd": 120,
+    "min": 0
+   }
+  }
+ ],
+ "history": {
+  "days": 7,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "co2",
+  "op": "gt",
+  "threshold": 1000,
+  "hysteresis": 50,
+  "minDurationSec": 900,
+  "baseline": {
+   "mean": 620,
+   "sd": 40
+  },
+  "deep": 1100,
+  "deepSd": 15
+ },
+ "tzEvent": {
+  "metric": "temperature",
+  "kind": "spike",
+  "value": 31.8,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "set_relay",
+   "params": [
+    {
+     "key": "channel",
+     "type": "int",
+     "min": 1,
+     "max": 8
+    },
+    {
+     "key": "on",
+     "type": "bool"
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "co2_alert_ppm",
+   "type": "int",
+   "min": 400,
+   "max": 5000
+  },
+  {
+   "key": "away_mode",
+   "type": "enum",
+   "values": [
+    "home",
+    "away",
+    "night"
+   ]
+  }
+ ],
+ "diskGB": 300,
+ "chart": {
+  "days": 7,
+  "points": 600
+ },
+ "rt": {
+  "room": {
+   "n": 24,
+   "hot": 3200
+  },
+  "clients": 3200,
+  "latencyMs": 1000,
+  "spreadMs": 300,
+  "duplex": true,
+  "wsBlocked": false,
+  "memMB": 512,
+  "returnMaxS": 10,
+  "fanMs": 40,
+  "deployS": 6,
+  "stallS": 20,
+  "queueKB": 128
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "co2",
+    "label": "Концентрація CO₂",
+    "unit": "ppm",
+    "decimals": 0,
+    "rule": {
+     "direction": "above",
+     "warn": 800,
+     "crit": 1000
+    }
+   },
+   {
+    "metric": "power_w",
+    "label": "Споживання електроенергії",
+    "unit": "Вт",
+    "decimals": 0,
+    "rule": {
+     "direction": "above",
+     "warn": 2500,
+     "crit": 3200
+    }
+   }
+  ],
+  "lossPct": 2,
+  "deltaMs": 500,
+  "falsePerDayMax": 1,
+  "silenceMaxS": 600,
+  "ageMaxS": 200,
+  "trafficMBDayMax": 100,
+  "ranges": [
+   "1h",
+   "24h",
+   "7d"
+  ],
+  "palette": {
+   "ok": "#00796B",
+   "warn": "#FFB300",
+   "crit": "#B71C1C",
+   "off": "#607D8B"
+  },
+  "views": [
+   {
+    "metric": "co2",
+    "cls": "gauge"
+   },
+   {
+    "metric": "motion",
+    "cls": "state"
+   },
+   {
+    "metric": "power_w",
+    "cls": "gauge"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": -90,
+  "rttMs": 400,
+  "ble": {
+   "mtu": 185,
+   "messageBytes": 60
+  },
+  "wifiS": 10,
+  "maxWaitS": 120,
+  "qLossPct": 10,
+  "queueN": 40,
+  "repeatsPerDayMax": 3,
+  "alertStaleS": 1800,
+  "hys": {
+   "power_w": 150
+  }
+ },
+ "sec": {
+  "pw": {
+   "C": 2,
+   "memBudgetMiB": 600,
+   "burstMaxS": 300
+  },
+  "login": {
+   "topN": 10000,
+   "minDays": 14,
+   "legitPerDay": 30,
+   "accounts": 3200,
+   "sprayTop": 10,
+   "sprayMinDays": 3,
+   "natUsers": 5,
+   "triesPerUserDay": 8
+  },
+  "policy": {
+   "text": [
+    "Гість будинку (viewer) не бачить потоку подій у реальному часі: за ним видно, коли в оселі хтось є.",
+    "Історію команд (коли вмикали і вимикали прилади) бачить лише власник, тобто адміністратор.",
+    "Прив’язувати нові пристрої до свого будинку можуть власник і члени родини (operator)."
+   ],
+   "overrides": {
+    "stream:read": [
+     "operator",
+     "admin"
+    ],
+    "command:read": [
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 20,
+   "burstCap": 100
+  },
+  "tokens": {
+   "accessMaxS": 3600,
+   "storageMiB": 2500,
+   "offlineMaxDays": 45,
+   "absMaxDays": 180
+  },
+  "hook": {
+   "skewS": 30,
+   "delayS": 60,
+   "memMB": 2
+  },
+  "retention": {
+   "telemetryMaxDays": 30,
+   "diskShare": 0.1,
+   "audit_log": 90,
+   "rejected": 30
+  },
+  "geo": null,
+  "pseudonym": true
+ },
+ "qa": {
+  "ciBudgetS": 8,
+  "e2eMs": 2300,
+  "e2e": [
+   {
+    "path": "Вхід користувача й список кімнат",
+    "priority": 1
+   },
+   {
+    "path": "Тривога CO₂ понад 1000 ppm на картці",
+    "priority": 2
+   },
+   {
+    "path": "Команда set_relay підтверджується пристроєм",
+    "priority": 3
+   },
+   {
+    "path": "Режим «немає вдома» вимикає кімнатні сповіщення",
+    "priority": 4
+   },
+   {
+    "path": "Історія CO₂ за 24 год",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.025,
+   "target": 0.005
+  },
+  "redMax": 0.04,
+  "suite": [
+   {
+    "test": "підтвердження set_relay пристроєм",
+    "p": 0.05
+   },
+   {
+    "test": "потік SSE після перепідключення",
+    "p": 0.035
+   },
+   {
+    "test": "порядок сповіщень за секунду",
+    "p": 0.02
+   },
+   {
+    "test": "часова зона в історії",
+    "p": 0.01
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99.9,
+   "errors": [
+    0.05,
+    0.004
+   ]
+  },
+  "silenceMaxS": 700,
+  "probe": {
+   "detectS": 60,
+   "startS": 8
+  }
+ }
+}

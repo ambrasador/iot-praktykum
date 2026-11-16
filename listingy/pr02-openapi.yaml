@@ -1,0 +1,16 @@
+CommandRequest:
+  type: object
+  required: [name, params]
+  properties:
+    name: { type: string, enum: [irrigate, set_setpoint, set_fan] }
+    params: { type: object }
+  allOf:
+    - if: { properties: { name: { const: set_fan } }, required: [name] }
+      then:
+        properties:
+          params:
+            type: object
+            required: [speed_pct]
+            additionalProperties: false
+            properties:
+              speed_pct: { type: integer, minimum: 0, maximum: 100 }

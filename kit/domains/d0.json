@@ -1,0 +1,294 @@
+{
+ "id": 0,
+ "code": "D0",
+ "title": "Теплиця (демонстраційний приклад з підручника)",
+ "site": "Теплиця з прикладу розділу 1",
+ "topicRoot": "greenhouse",
+ "load": {
+  "N": 200,
+  "m": 4,
+  "T": 60,
+  "model": "poisson"
+ },
+ "requirements": {
+  "durable": false,
+  "deviceBatch": 4
+ },
+ "dashboard": {
+  "U": 20,
+  "p": 60,
+  "F": 60
+ },
+ "metrics": [
+  {
+   "id": "ec",
+   "label": "Електропровідність розчину",
+   "unit": "мСм/см",
+   "kind": "gauge",
+   "periodSec": 60,
+   "range": [
+    0,
+    10
+   ],
+   "decimals": 2,
+   "gen": {
+    "mean": 2.1,
+    "sd": 0.15
+   }
+  }
+ ],
+ "history": {
+  "days": 7,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "soil_moisture",
+  "op": "lt",
+  "threshold": 28,
+  "hysteresis": 2,
+  "minDurationSec": 900,
+  "baseline": {
+   "mean": 50,
+   "sd": 2
+  },
+  "deep": 21,
+  "deepSd": 1
+ },
+ "tzEvent": {
+  "metric": "temperature",
+  "kind": "spike",
+  "value": 36.9,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "set_fan",
+   "params": [
+    {
+     "key": "speed_pct",
+     "type": "int",
+     "min": 0,
+     "max": 100
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "ec_max",
+   "type": "number",
+   "min": 0.5,
+   "max": 8
+  }
+ ],
+ "diskGB": 120,
+ "chart": {
+  "days": 7,
+  "points": 350
+ },
+ "rt": {
+  "room": {
+   "n": 40,
+   "hot": 20
+  },
+  "clients": 600,
+  "latencyMs": 5000,
+  "spreadMs": 250,
+  "duplex": false,
+  "wsBlocked": false,
+  "memMB": 64,
+  "returnMaxS": 15,
+  "fanMs": 100,
+  "deployS": 8,
+  "stallS": 15,
+  "queueKB": 64
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "soil_moisture",
+    "label": "Вологість ґрунту",
+    "unit": "%",
+    "decimals": 1,
+    "rule": {
+     "direction": "below",
+     "warn": 33,
+     "crit": 28
+    }
+   },
+   {
+    "metric": "temperature",
+    "label": "Температура повітря",
+    "unit": "°C",
+    "decimals": 1,
+    "rule": {
+     "direction": "above",
+     "warn": 32,
+     "crit": 35
+    }
+   }
+  ],
+  "lossPct": 5,
+  "deltaMs": 500,
+  "falsePerDayMax": 1,
+  "silenceMaxS": 300,
+  "ageMaxS": 150,
+  "trafficMBDayMax": 300,
+  "ranges": [
+   "1h",
+   "24h",
+   "7d"
+  ],
+  "palette": {
+   "ok": "#2E7D32",
+   "warn": "#F9A825",
+   "crit": "#C62828",
+   "off": "#757575"
+  },
+  "views": [
+   {
+    "metric": "soil_moisture",
+    "cls": "gauge"
+   },
+   {
+    "metric": "temperature",
+    "cls": "gauge"
+   },
+   {
+    "metric": "ec",
+    "cls": "gauge"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": 100,
+  "rttMs": 300,
+  "ble": {
+   "mtu": 23,
+   "messageBytes": 54
+  },
+  "wifiS": 10,
+  "maxWaitS": 90,
+  "qLossPct": 15,
+  "queueN": 50,
+  "repeatsPerDayMax": 1,
+  "alertStaleS": 600,
+  "hys": {
+   "temperature": 1
+  }
+ },
+ "sec": {
+  "pw": {
+   "C": 2,
+   "memBudgetMiB": 100,
+   "burstMaxS": 5
+  },
+  "login": {
+   "topN": 1000,
+   "minDays": 1,
+   "legitPerDay": 20,
+   "accounts": 20,
+   "sprayTop": 10,
+   "sprayMinDays": 0.02,
+   "natUsers": 4,
+   "triesPerUserDay": 5
+  },
+  "policy": {
+   "text": [
+    "Нові датчики прив’язують лише адміністратор."
+   ],
+   "overrides": {
+    "device:claim": [
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 30,
+   "burstCap": 200
+  },
+  "tokens": {
+   "accessMaxS": 900,
+   "storageMiB": 50,
+   "offlineMaxDays": 20,
+   "absMaxDays": 90
+  },
+  "hook": {
+   "skewS": 60,
+   "delayS": 120,
+   "memMB": 2
+  },
+  "retention": {
+   "telemetryMaxDays": 365,
+   "diskShare": 0.5,
+   "audit_log": 365,
+   "rejected": 30
+  },
+  "geo": null,
+  "pseudonym": false
+ },
+ "qa": {
+  "ciBudgetS": 7,
+  "e2eMs": 1200,
+  "e2e": [
+   {
+    "path": "Картка вологості показує свіже значення",
+    "priority": 1
+   },
+   {
+    "path": "Критична вологість фарбує картку в червоний",
+    "priority": 2
+   },
+   {
+    "path": "Перемикач діапазону 1 год / 24 год / 7 діб",
+    "priority": 3
+   },
+   {
+    "path": "Експорт CSV за 24 год",
+    "priority": 4
+   },
+   {
+    "path": "Вхід і вихід користувача",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.05,
+   "target": 0.01
+  },
+  "redMax": 0.03,
+  "suite": [
+   {
+    "test": "опитування лотка через брокер",
+    "p": 0.04
+   },
+   {
+    "test": "повтор команди irrigate",
+    "p": 0.02
+   },
+   {
+    "test": "перемальовування графіка",
+    "p": 0.015
+   },
+   {
+    "test": "розбір CSV із локаллю",
+    "p": 0.005
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99.9,
+   "errors": [
+    0.02,
+    0.01
+   ]
+  },
+  "silenceMaxS": 380,
+  "probe": {
+   "detectS": 45,
+   "startS": 5
+  }
+ }
+}

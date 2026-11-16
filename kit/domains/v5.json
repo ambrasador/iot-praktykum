@@ -1,0 +1,362 @@
+{
+ "id": 5,
+ "code": "V5",
+ "title": "Інфраструктура громади",
+ "site": "Громада: 2 800 ліхтарів і 40 генераторів",
+ "topicRoot": "infra",
+ "load": {
+  "N": 2800,
+  "m": 3,
+  "T": 300,
+  "model": "burst",
+  "f": 0.4,
+  "tau": 120,
+  "b": 216
+ },
+ "requirements": {
+  "durable": true,
+  "deviceBatch": 72
+ },
+ "dashboard": {
+  "U": 60,
+  "p": 5,
+  "F": 3600
+ },
+ "metrics": [
+  {
+   "id": "voltage",
+   "label": "Напруга мережі",
+   "unit": "В",
+   "kind": "gauge",
+   "periodSec": 300,
+   "range": [
+    0,
+    300
+   ],
+   "decimals": 1,
+   "gen": {
+    "mean": 229,
+    "sd": 3.5
+   }
+  },
+  {
+   "id": "mains_present",
+   "label": "Наявність мережі",
+   "unit": "0/1",
+   "kind": "gauge",
+   "periodSec": 300,
+   "range": [
+    0,
+    1
+   ],
+   "decimals": 0,
+   "gen": {
+    "bernoulli": 0.98
+   }
+  },
+  {
+   "id": "lamp_on",
+   "label": "Стан ліхтаря",
+   "unit": "0/1",
+   "kind": "gauge",
+   "periodSec": 300,
+   "range": [
+    0,
+    1
+   ],
+   "decimals": 0,
+   "gen": {
+    "bernoulli": 0.5
+   }
+  }
+ ],
+ "history": {
+  "days": 7,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "voltage",
+  "op": "lt",
+  "threshold": 200,
+  "hysteresis": 6,
+  "minDurationSec": 600,
+  "baseline": {
+   "mean": 229,
+   "sd": 2
+  },
+  "deep": 188,
+  "deepSd": 1.5
+ },
+ "tzEvent": {
+  "metric": "voltage",
+  "kind": "spike",
+  "value": 251,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "set_lamp",
+   "params": [
+    {
+     "key": "on",
+     "type": "bool"
+    }
+   ]
+  },
+  {
+   "name": "set_schedule",
+   "params": [
+    {
+     "key": "on_min",
+     "type": "int",
+     "min": 0,
+     "max": 1439,
+     "example": 480
+    },
+    {
+     "key": "off_min",
+     "type": "int",
+     "min": 0,
+     "max": 1439,
+     "example": 1200
+    }
+   ],
+   "rule": "on_min != off_min"
+  }
+ ],
+ "settings": [
+  {
+   "key": "outage_alarm_min",
+   "type": "int",
+   "min": 5,
+   "max": 180
+  },
+  {
+   "key": "voltage_low_v",
+   "type": "int",
+   "min": 180,
+   "max": 225
+  }
+ ],
+ "diskGB": 150,
+ "chart": {
+  "days": 14,
+  "points": 500
+ },
+ "rt": {
+  "room": {
+   "n": 40,
+   "hot": 1800
+  },
+  "clients": 1800,
+  "latencyMs": 30000,
+  "spreadMs": 400,
+  "duplex": false,
+  "wsBlocked": true,
+  "memMB": 24,
+  "returnMaxS": 30,
+  "fanMs": 150,
+  "deployS": 10,
+  "stallS": 30,
+  "queueKB": 256
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "voltage",
+    "label": "Напруга мережі",
+    "unit": "В",
+    "decimals": 1,
+    "rule": {
+     "direction": "below",
+     "warn": 210,
+     "crit": 200
+    }
+   },
+   {
+    "metric": "mains_present",
+    "label": "Наявність мережі",
+    "unit": "",
+    "decimals": 0,
+    "rule": {
+     "direction": "below",
+     "warn": 1,
+     "crit": 1
+    }
+   }
+  ],
+  "lossPct": 3,
+  "deltaMs": 2000,
+  "falsePerDayMax": 1,
+  "silenceMaxS": 1800,
+  "ageMaxS": 1200,
+  "trafficMBDayMax": 50,
+  "ranges": [
+   "1h",
+   "24h",
+   "7d",
+   "14d"
+  ],
+  "palette": {
+   "ok": "#2E7D32",
+   "warn": "#F57C00",
+   "crit": "#AD1457",
+   "off": "#546E7A"
+  },
+  "views": [
+   {
+    "metric": "voltage",
+    "cls": "gauge"
+   },
+   {
+    "metric": "mains_present",
+    "cls": "state"
+   },
+   {
+    "metric": "lamp_on",
+    "cls": "state"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": 20,
+  "rttMs": 2400,
+  "ble": {
+   "mtu": 100,
+   "messageBytes": 180
+  },
+  "wifiS": 25,
+  "maxWaitS": 180,
+  "qLossPct": 20,
+  "queueN": 30,
+  "repeatsPerDayMax": 2,
+  "alertStaleS": 150,
+  "hys": {
+   "mains_present": 0
+  }
+ },
+ "sec": {
+  "pw": {
+   "C": 2,
+   "memBudgetMiB": 20,
+   "burstMaxS": 30
+  },
+  "login": {
+   "topN": 1000,
+   "minDays": 7,
+   "legitPerDay": 10,
+   "accounts": 60,
+   "sprayTop": 10,
+   "sprayMinDays": 2,
+   "natUsers": 8,
+   "triesPerUserDay": 5
+  },
+  "policy": {
+   "text": [
+    "Налаштування розкладів освітлення й водопостачання змінює лише адміністратор: хибний розклад лишає мікрорайон без світла.",
+    "Чергові (viewer) бачать, які команди надіслано, щоб не дублювати їх, але самі не керують.",
+    "Нові об’єкти реєструє лише адміністратор."
+   ],
+   "overrides": {
+    "settings:write": [
+     "admin"
+    ],
+    "command:read": [
+     "viewer",
+     "operator",
+     "admin"
+    ],
+    "device:claim": [
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 45,
+   "burstCap": 150
+  },
+  "tokens": {
+   "accessMaxS": 900,
+   "storageMiB": 60,
+   "offlineMaxDays": 10,
+   "absMaxDays": 60
+  },
+  "hook": {
+   "skewS": 120,
+   "delayS": 300,
+   "memMB": 0.5
+  },
+  "retention": {
+   "telemetryMaxDays": 365,
+   "diskShare": 0.5,
+   "audit_log": 365,
+   "rejected": 30
+  },
+  "geo": null,
+  "pseudonym": false
+ },
+ "qa": {
+  "ciBudgetS": 7,
+  "e2eMs": 1500,
+  "e2e": [
+   {
+    "path": "Опора без напруги стає червоною",
+    "priority": 1
+   },
+   {
+    "path": "Графік напруги за 24 год",
+    "priority": 2
+   },
+   {
+    "path": "Увімкнення лампи set_lamp",
+    "priority": 3
+   },
+   {
+    "path": "Розклад освітлення set_schedule",
+    "priority": 4
+   },
+   {
+    "path": "Подія відновлення живлення",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.03,
+   "target": 0.005
+  },
+  "redMax": 0.07,
+  "suite": [
+   {
+    "test": "хвиля подій після відновлення живлення",
+    "p": 0.05
+   },
+   {
+    "test": "розклад через північ",
+    "p": 0.04
+   },
+   {
+    "test": "підтвердження set_lamp",
+    "p": 0.02
+   },
+   {
+    "test": "запис напруги з одним знаком",
+    "p": 0.01
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99.7,
+   "errors": [
+    0.06,
+    0.012
+   ]
+  },
+  "silenceMaxS": 1560,
+  "probe": {
+   "detectS": 90,
+   "startS": 10
+  }
+ }
+}

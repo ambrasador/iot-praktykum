@@ -1,0 +1,327 @@
+{
+ "id": 1,
+ "code": "V1",
+ "title": "Агромоніторинг теплиці/поля",
+ "site": "Агрокомплекс: шість теплиць і польова ділянка",
+ "topicRoot": "greenhouse",
+ "load": {
+  "N": 450,
+  "m": 4,
+  "T": 45,
+  "model": "poisson"
+ },
+ "requirements": {
+  "durable": false,
+  "deviceBatch": 4
+ },
+ "dashboard": {
+  "U": 35,
+  "p": 30,
+  "F": 60
+ },
+ "metrics": [
+  {
+   "id": "soil_temp",
+   "label": "Температура ґрунту",
+   "unit": "°C",
+   "kind": "gauge",
+   "periodSec": 45,
+   "range": [
+    -20,
+    60
+   ],
+   "decimals": 1,
+   "gen": {
+    "mean": 19,
+    "sd": 1.2
+   }
+  },
+  {
+   "id": "wind",
+   "label": "Швидкість вітру",
+   "unit": "м/с",
+   "kind": "gauge",
+   "periodSec": 45,
+   "range": [
+    0,
+    60
+   ],
+   "decimals": 1,
+   "gen": {
+    "mean": 4.5,
+    "sd": 2,
+    "min": 0
+   }
+  }
+ ],
+ "history": {
+  "days": 7,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "soil_moisture",
+  "op": "lt",
+  "threshold": 30,
+  "hysteresis": 3,
+  "minDurationSec": 600,
+  "baseline": {
+   "mean": 52,
+   "sd": 2
+  },
+  "deep": 24,
+  "deepSd": 1
+ },
+ "tzEvent": {
+  "metric": "temperature",
+  "kind": "spike",
+  "value": 38.4,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "set_vent",
+   "params": [
+    {
+     "key": "position_pct",
+     "type": "int",
+     "min": 0,
+     "max": 100
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "wind_close_ms",
+   "type": "int",
+   "min": 5,
+   "max": 25
+  },
+  {
+   "key": "vent_open_temp",
+   "type": "number",
+   "min": 15,
+   "max": 40
+  }
+ ],
+ "diskGB": 250,
+ "chart": {
+  "days": 7,
+  "points": 400
+ },
+ "rt": {
+  "room": {
+   "n": 45,
+   "hot": 300
+  },
+  "clients": 1200,
+  "latencyMs": 15000,
+  "spreadMs": 220,
+  "duplex": false,
+  "wsBlocked": false,
+  "memMB": 128,
+  "returnMaxS": 20,
+  "fanMs": 100,
+  "deployS": 2.5,
+  "stallS": 10,
+  "queueKB": 64
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "soil_moisture",
+    "label": "Вологість ґрунту",
+    "unit": "%",
+    "decimals": 1,
+    "rule": {
+     "direction": "below",
+     "warn": 35,
+     "crit": 30
+    }
+   },
+   {
+    "metric": "wind",
+    "label": "Швидкість вітру",
+    "unit": "м/с",
+    "decimals": 1,
+    "rule": {
+     "direction": "above",
+     "warn": 12,
+     "crit": 18
+    }
+   }
+  ],
+  "lossPct": 4,
+  "deltaMs": 800,
+  "falsePerDayMax": 1,
+  "silenceMaxS": 240,
+  "ageMaxS": 120,
+  "trafficMBDayMax": 300,
+  "ranges": [
+   "1h",
+   "24h",
+   "7d"
+  ],
+  "palette": {
+   "ok": "#388E3C",
+   "warn": "#FBC02D",
+   "crit": "#D32F2F",
+   "off": "#9E9E9E"
+  },
+  "views": [
+   {
+    "metric": "soil_moisture",
+    "cls": "gauge"
+   },
+   {
+    "metric": "soil_temp",
+    "cls": "gauge"
+   },
+   {
+    "metric": "wind",
+    "cls": "gauge"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": 75,
+  "rttMs": 800,
+  "ble": {
+   "mtu": 23,
+   "messageBytes": 60
+  },
+  "wifiS": 20,
+  "maxWaitS": 90,
+  "qLossPct": 15,
+  "queueN": 60,
+  "repeatsPerDayMax": 1,
+  "alertStaleS": 300,
+  "hys": {
+   "wind": 1.5
+  }
+ },
+ "sec": {
+  "pw": {
+   "C": 2,
+   "memBudgetMiB": 140,
+   "burstMaxS": 8
+  },
+  "login": {
+   "topN": 10000,
+   "minDays": 30,
+   "legitPerDay": 20,
+   "accounts": 35,
+   "sprayTop": 10,
+   "sprayMinDays": 1,
+   "natUsers": 6,
+   "triesPerUserDay": 5
+  },
+  "policy": {
+   "text": [
+    "Нові датчики на полі прив’язує лише адміністратор: чужий датчик у групі спотворить середні по ділянці.",
+    "Пороги й цільові значення (налаштування) змінює лише адміністратор: хибне цільове значення вологості губить посів.",
+    "Агроном (viewer) бачить журнал команд, щоб знати, коли поливали, але команд не надсилає."
+   ],
+   "overrides": {
+    "device:claim": [
+     "admin"
+    ],
+    "settings:write": [
+     "admin"
+    ],
+    "command:read": [
+     "viewer",
+     "operator",
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 30,
+   "burstCap": 150
+  },
+  "tokens": {
+   "accessMaxS": 3600,
+   "storageMiB": 20,
+   "offlineMaxDays": 21,
+   "absMaxDays": 90
+  },
+  "hook": {
+   "skewS": 90,
+   "delayS": 120,
+   "memMB": 1
+  },
+  "retention": {
+   "telemetryMaxDays": 365,
+   "diskShare": 0.15,
+   "audit_log": 180,
+   "rejected": 30
+  },
+  "geo": null,
+  "pseudonym": false
+ },
+ "qa": {
+  "ciBudgetS": 8,
+  "e2eMs": 1450,
+  "e2e": [
+   {
+    "path": "Картка вологості ґрунту показує свіже значення",
+    "priority": 1
+   },
+   {
+    "path": "Критична вологість фарбує картку в червоний",
+    "priority": 2
+   },
+   {
+    "path": "Вітер понад 18 м/с потрапляє до списку тривог",
+    "priority": 3
+   },
+   {
+    "path": "Перемикач діапазону 1 год / 24 год / 7 діб",
+    "priority": 4
+   },
+   {
+    "path": "Експорт CSV за 24 год",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.04,
+   "target": 0.01
+  },
+  "redMax": 0.07,
+  "suite": [
+   {
+    "test": "опитування вітру через брокер",
+    "p": 0.06
+   },
+   {
+    "test": "повтор команди set_vent",
+    "p": 0.03
+   },
+   {
+    "test": "перемальовування графіка за 7 діб",
+    "p": 0.02
+   },
+   {
+    "test": "розбір CSV із локаллю",
+    "p": 0.01
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99.5,
+   "errors": [
+    0.1,
+    0.02
+   ]
+  },
+  "silenceMaxS": 270,
+  "probe": {
+   "detectS": 40,
+   "startS": 6
+  }
+ }
+}

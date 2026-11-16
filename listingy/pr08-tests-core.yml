@@ -1,0 +1,57 @@
+# ops/alerts.d0.test.yml: власні тести правил, частина 1 (рівень «4»)
+# Запуск з кореня практикуму: node kit/tools/promtool.mjs test
+rule_files: [alerts.d0.rules.yml]
+evaluation_interval: 60s          # крок правил, pr08.silence.evalS
+
+tests:
+  - name: показання йдуть 10 хв, далі тиша
+    interval: 15s                 # крок збору, pr08.silence.scrapeS
+    input_series:
+      - series: 'process_start_time_seconds'
+        values: '0x76'            # процес стартував у момент 0
+      - series: 'greenhouse_last_reading_timestamp_seconds'
+        values: '0+15x40 600x36'  # росте до 600 с, далі стоїть
+    alert_rule_test:
+      # вік 300 с дорівнює порогу, а правило каже «понад»: мовчить
+      - {eval_time: 15m, alertname: NoReadings, exp_alerts: []}
+      - eval_time: 16m            # вік 360 с
+        alertname: NoReadings
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: Жодного показання понад 300 с
+
+  - name: брокер відпав на 5 хв (600…885 с)
+    interval: 15s
+    input_series:
+      - series: 'greenhouse_broker_connected'
+        values: '1x39 0x19 1x60'
+    alert_rule_test:
+      # 11-а хвилина: прапор 0 лише 1 хв із двох потрібних
+      - {eval_time: 11m, alertname: BrokerDisconnected, exp_alerts: []}
+      - eval_time: 14m
+        alertname: BrokerDisconnected
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: "Сервер не бачить брокера понад 2 хв: показання
+                не надходять"
+      - {eval_time: 17m, alertname: BrokerDisconnected, exp_alerts: []}
+
+  - name: 2 % помилок після 6 год норми, швидка пара
+    interval: 1m
+    input_series:
+      - series: 'greenhouse_http_request_seconds_count{status="200"}'
+        values: '0+100x360 36098+98x60'  # 100 запитів/хв, далі 98
+      - series: 'greenhouse_http_request_seconds_count{status="500"}'
+        values: '0x360 2+2x60'          # 2 помилки/хв з 360-ї хв
+    alert_rule_test:
+      # t = 43,2 хв після 360-ї: мовчить за 0,9 t, спрацьовує за 1,2 t
+      - {eval_time: 398m, alertname: ApiBudgetFastBurn, exp_alerts: []}
+      - eval_time: 412m
+        alertname: ApiBudgetFastBurn
+        exp_alerts:
+          - exp_labels: {severity: page}
+            exp_annotations:
+              summary: "API витрачає бюджет помилок у 14,4 раза
+                швидше за норму"

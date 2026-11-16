@@ -1,0 +1,381 @@
+{
+ "id": 4,
+ "code": "V4",
+ "title": "Моніторинг транспортного парку",
+ "site": "Автопарк із 420 транспортних засобів",
+ "topicRoot": "fleet",
+ "load": {
+  "N": 420,
+  "m": 5,
+  "T": 30,
+  "model": "burst",
+  "f": 0.7,
+  "tau": 30,
+  "b": 75
+ },
+ "requirements": {
+  "durable": false,
+  "deviceBatch": 5
+ },
+ "dashboard": {
+  "U": 3600,
+  "p": 2,
+  "F": 10
+ },
+ "metrics": [
+  {
+   "id": "lat",
+   "label": "Широта",
+   "unit": "°",
+   "kind": "gauge",
+   "periodSec": 30,
+   "range": [
+    -90,
+    90
+   ],
+   "decimals": 6,
+   "gen": {
+    "mean": 46.64,
+    "sd": 0.05
+   }
+  },
+  {
+   "id": "lon",
+   "label": "Довгота",
+   "unit": "°",
+   "kind": "gauge",
+   "periodSec": 30,
+   "range": [
+    -180,
+    180
+   ],
+   "decimals": 6,
+   "gen": {
+    "mean": 32.62,
+    "sd": 0.05
+   }
+  },
+  {
+   "id": "speed",
+   "label": "Швидкість",
+   "unit": "км/год",
+   "kind": "gauge",
+   "periodSec": 30,
+   "range": [
+    0,
+    250
+   ],
+   "decimals": 0,
+   "gen": {
+    "mean": 48,
+    "sd": 22,
+    "min": 0
+   }
+  },
+  {
+   "id": "fuel_level",
+   "label": "Рівень пального",
+   "unit": "%",
+   "kind": "gauge",
+   "periodSec": 30,
+   "range": [
+    0,
+    100
+   ],
+   "decimals": 1,
+   "gen": {
+    "mean": 55,
+    "sd": 18,
+    "min": 0,
+    "max": 100
+   }
+  },
+  {
+   "id": "odometer",
+   "label": "Пробіг",
+   "unit": "км",
+   "kind": "counter",
+   "periodSec": 30,
+   "range": [
+    0,
+    9999999
+   ],
+   "decimals": 1,
+   "gen": {
+    "counter": 0.15
+   }
+  }
+ ],
+ "history": {
+  "days": 7,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "speed",
+  "op": "gt",
+  "threshold": 90,
+  "hysteresis": 5,
+  "minDurationSec": 60,
+  "baseline": {
+   "mean": 45,
+   "sd": 10,
+   "max": 75
+  },
+  "deep": 100,
+  "deepSd": 2
+ },
+ "tzEvent": {
+  "metric": "fuel_level",
+  "kind": "spike",
+  "value": 99.5,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "request_track",
+   "params": [
+    {
+     "key": "duration_sec",
+     "type": "int",
+     "min": 10,
+     "max": 300
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "speed_limit_kmh",
+   "type": "int",
+   "min": 20,
+   "max": 130
+  },
+  {
+   "key": "low_fuel_pct",
+   "type": "int",
+   "min": 5,
+   "max": 30
+  }
+ ],
+ "diskGB": 600,
+ "chart": {
+  "days": 3,
+  "points": 300
+ },
+ "rt": {
+  "room": {
+   "n": 420,
+   "hot": 1500
+  },
+  "clients": 3600,
+  "latencyMs": 3000,
+  "spreadMs": 800,
+  "duplex": false,
+  "wsBlocked": false,
+  "memMB": 384,
+  "returnMaxS": 10,
+  "fanMs": 60,
+  "deployS": 5,
+  "stallS": 60,
+  "queueKB": 512
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "speed",
+    "label": "Швидкість",
+    "unit": "км/год",
+    "decimals": 0,
+    "rule": {
+     "direction": "above",
+     "warn": 80,
+     "crit": 90
+    }
+   },
+   {
+    "metric": "fuel_level",
+    "label": "Рівень пального",
+    "unit": "%",
+    "decimals": 0,
+    "rule": {
+     "direction": "below",
+     "warn": 20,
+     "crit": 10
+    }
+   }
+  ],
+  "lossPct": 6,
+  "deltaMs": 400,
+  "falsePerDayMax": 5,
+  "silenceMaxS": 240,
+  "ageMaxS": 120,
+  "trafficMBDayMax": 100,
+  "ranges": [
+   "1h",
+   "24h",
+   "3d"
+  ],
+  "palette": {
+   "ok": "#43A047",
+   "warn": "#FDD835",
+   "crit": "#C2185B",
+   "off": "#8D6E63"
+  },
+  "views": [
+   {
+    "metric": "speed",
+    "cls": "gauge"
+   },
+   {
+    "metric": "odometer",
+    "cls": "counter"
+   },
+   {
+    "metric": "fuel_level",
+    "cls": "gauge"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": 45,
+  "rttMs": 1200,
+  "ble": {
+   "mtu": 23,
+   "messageBytes": 95
+  },
+  "wifiS": 15,
+  "maxWaitS": 60,
+  "qLossPct": 30,
+  "queueN": 80,
+  "repeatsPerDayMax": 10,
+  "alertStaleS": 45,
+  "hys": {
+   "fuel_level": 2
+  }
+ },
+ "sec": {
+  "pw": {
+   "C": 2,
+   "memBudgetMiB": 150,
+   "burstMaxS": 500
+  },
+  "login": {
+   "topN": 10000,
+   "minDays": 90,
+   "legitPerDay": 15,
+   "accounts": 3600,
+   "sprayTop": 10,
+   "sprayMinDays": 7,
+   "natUsers": 25,
+   "triesPerUserDay": 4
+  },
+  "policy": {
+   "text": [
+    "Запит положення машини (команда) і журнал таких запитів доступні лише адміністратору флоту: слід машини — це слід водія.",
+    "Нові машини до флоту додає лише адміністратор.",
+    "Диспетчер (operator) бачить телеметрію й керує всім, крім запиту положення; водій (viewer) читає телеметрію своєї машини."
+   ],
+   "overrides": {
+    "command:create": [
+     "admin"
+    ],
+    "command:read": [
+     "admin"
+    ],
+    "device:claim": [
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 15,
+   "burstCap": 200
+  },
+  "tokens": {
+   "accessMaxS": 900,
+   "storageMiB": 1500,
+   "offlineMaxDays": 3,
+   "absMaxDays": 30
+  },
+  "hook": {
+   "skewS": 15,
+   "delayS": 45,
+   "memMB": 1.5
+  },
+  "retention": {
+   "telemetryMaxDays": 90,
+   "diskShare": 0.1,
+   "audit_log": 365,
+   "rejected": 30
+  },
+  "geo": {
+   "minCellKm": 2,
+   "maxCellKm": 2.5
+  },
+  "pseudonym": true
+ },
+ "qa": {
+  "ciBudgetS": 7.5,
+  "e2eMs": 1000,
+  "e2e": [
+   {
+    "path": "Позиція авто на мапі оновлюється",
+    "priority": 1
+   },
+   {
+    "path": "Перевищення 90 км/год підсвічує авто",
+    "priority": 2
+   },
+   {
+    "path": "Запит треку request_track",
+    "priority": 3
+   },
+   {
+    "path": "Низький рівень пального в списку",
+    "priority": 4
+   },
+   {
+    "path": "Історія маршруту за добу",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.0833,
+   "target": 0.02
+  },
+  "redMax": 0.06,
+  "suite": [
+   {
+    "test": "координати біля меридіана 180°",
+    "p": 0.07
+   },
+   {
+    "test": "порядок точок треку",
+    "p": 0.04
+   },
+   {
+    "test": "запит request_track через брокер",
+    "p": 0.03
+   },
+   {
+    "test": "одометр після перезапуску",
+    "p": 0.015
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99,
+   "errors": [
+    0.2,
+    0.08
+   ]
+  },
+  "silenceMaxS": 175,
+  "probe": {
+   "detectS": 30,
+   "startS": 5
+  }
+ }
+}

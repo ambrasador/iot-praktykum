@@ -1,0 +1,19 @@
+--- ops/alerts.rules.yml
++++ ops/alerts.d0.rules.yml
+@@ -53,6 +53,7 @@
+           summary: "API повільно виходить за бюджет помилок"
+ 
+   - name: greenhouse-ingest
++    interval: 60s   # крок правил, pr08.silence.evalS
+     rules:
+       - alert: BrokerDisconnected
+         expr: greenhouse_broker_connected == 0
+@@ -71,7 +72,7 @@
+           ) > 300
+         labels: { severity: page }
+         annotations:
+-          summary: "Жодного показання понад 5 хв"
++          summary: "Жодного показання понад 300 с"
+ 
+       - alert: RejectedShareHigh
+         expr: |

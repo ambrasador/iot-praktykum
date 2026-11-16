@@ -1,0 +1,360 @@
+{
+ "id": 3,
+ "code": "V3",
+ "title": "Облік комунальних послуг",
+ "site": "Район обліку на 48 000 лічильників",
+ "topicRoot": "meter",
+ "load": {
+  "N": 48000,
+  "m": 1,
+  "T": 900,
+  "model": "burst",
+  "f": 0.8,
+  "tau": 12,
+  "b": 1
+ },
+ "requirements": {
+  "durable": true,
+  "deviceBatch": 1
+ },
+ "dashboard": {
+  "U": 4000,
+  "p": 900,
+  "F": 900
+ },
+ "metrics": [
+  {
+   "id": "water_m3",
+   "label": "Холодна вода",
+   "unit": "м³",
+   "kind": "counter",
+   "periodSec": 900,
+   "range": [
+    0,
+    99999.999
+   ],
+   "decimals": 3,
+   "gen": {
+    "counter": 0.004
+   }
+  },
+  {
+   "id": "gas_m3",
+   "label": "Природний газ",
+   "unit": "м³",
+   "kind": "counter",
+   "periodSec": 900,
+   "range": [
+    0,
+    99999.999
+   ],
+   "decimals": 3,
+   "gen": {
+    "counter": 0.02
+   }
+  },
+  {
+   "id": "energy_kwh",
+   "label": "Електроенергія",
+   "unit": "кВт·год",
+   "kind": "counter",
+   "periodSec": 900,
+   "range": [
+    0,
+    999999.9
+   ],
+   "decimals": 1,
+   "gen": {
+    "counter": 0.12
+   }
+  },
+  {
+   "id": "flow_lpm",
+   "label": "Миттєва витрата води",
+   "unit": "л/хв",
+   "kind": "gauge",
+   "periodSec": 900,
+   "range": [
+    0,
+    600
+   ],
+   "decimals": 2,
+   "gen": {
+    "mean": 0.6,
+    "sd": 0.3,
+    "min": 0
+   }
+  }
+ ],
+ "history": {
+  "days": 40,
+  "devices": 4
+ },
+ "alert": {
+  "metric": "flow_lpm",
+  "op": "gt",
+  "threshold": 8,
+  "hysteresis": 2,
+  "minDurationSec": 3600,
+  "baseline": {
+   "mean": 0.6,
+   "sd": 0.3
+  },
+  "deep": 12,
+  "deepSd": 0.5
+ },
+ "tzEvent": {
+  "metric": "water_m3",
+  "kind": "jump",
+  "value": 3.2,
+  "at": "2026-10-10T22:30:00Z"
+ },
+ "commands": [
+  {
+   "name": "request_reading",
+   "params": [
+    {
+     "key": "metric",
+     "type": "enum",
+     "values": [
+      "water_m3",
+      "gas_m3",
+      "energy_kwh"
+     ]
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "key": "monthly_limit_m3",
+   "type": "number",
+   "min": 0,
+   "max": 1000
+  },
+  {
+   "key": "leak_flow_lpm",
+   "type": "number",
+   "min": 1,
+   "max": 60
+  }
+ ],
+ "diskGB": 400,
+ "chart": {
+  "days": 30,
+  "points": 700
+ },
+ "rt": {
+  "room": {
+   "n": 12,
+   "hot": 1500
+  },
+  "clients": 4000,
+  "latencyMs": 60000,
+  "spreadMs": 0,
+  "duplex": false,
+  "wsBlocked": false,
+  "memMB": 256,
+  "returnMaxS": 60,
+  "fanMs": 200,
+  "deployS": 30,
+  "stallS": 30,
+  "queueKB": 32
+ },
+ "ui": {
+  "cards": [
+   {
+    "metric": "flow_lpm",
+    "label": "Витрата води",
+    "unit": "л/хв",
+    "decimals": 1,
+    "rule": {
+     "direction": "above",
+     "warn": 5,
+     "crit": 8
+    }
+   },
+   {
+    "metric": "water_m3",
+    "label": "Показання лічильника води",
+    "unit": "м³",
+    "decimals": 3,
+    "rule": null
+   }
+  ],
+  "lossPct": 3,
+  "deltaMs": 1500,
+  "falsePerDayMax": 1,
+  "silenceMaxS": 3600,
+  "ageMaxS": 1800,
+  "trafficMBDayMax": 50,
+  "ranges": [
+   "1h",
+   "24h",
+   "7d",
+   "30d"
+  ],
+  "palette": {
+   "ok": "#1976D2",
+   "warn": "#FF8F00",
+   "crit": "#E53935",
+   "off": "#78909C"
+  },
+  "views": [
+   {
+    "metric": "water_m3",
+    "cls": "counter"
+   },
+   {
+    "metric": "flow_lpm",
+    "cls": "gauge"
+   },
+   {
+    "metric": "energy_kwh",
+    "cls": "counter"
+   }
+  ]
+ },
+ "mob": {
+  "skewS": 1200,
+  "rttMs": 1500,
+  "ble": {
+   "mtu": 247,
+   "messageBytes": 100
+  },
+  "wifiS": 20,
+  "maxWaitS": 60,
+  "qLossPct": 25,
+  "queueN": 12,
+  "repeatsPerDayMax": 1,
+  "alertStaleS": 86400,
+  "hys": {}
+ },
+ "sec": {
+  "pw": {
+   "C": 4,
+   "memBudgetMiB": 600,
+   "burstMaxS": 420
+  },
+  "login": {
+   "topN": 100000,
+   "minDays": 60,
+   "legitPerDay": 40,
+   "accounts": 4000,
+   "sprayTop": 10,
+   "sprayMinDays": 7,
+   "natUsers": 30,
+   "triesPerUserDay": 10
+  },
+  "policy": {
+   "text": [
+    "Лічильники опломбовані: прив’язувати їх до системи може лише адміністратор.",
+    "Тарифи й порогові значення (налаштування) змінює лише адміністратор.",
+    "Потік подій у реальному часі потрібен лише черговим монтерам (operator), абоненти (viewer) читають показання запитом."
+   ],
+   "overrides": {
+    "device:claim": [
+     "admin"
+    ],
+    "settings:write": [
+     "admin"
+    ],
+    "stream:read": [
+     "operator",
+     "admin"
+    ]
+   }
+  },
+  "limit": {
+   "other": 3,
+   "flushMaxS": 60,
+   "burstCap": 200
+  },
+  "tokens": {
+   "accessMaxS": 1800,
+   "storageMiB": 4000,
+   "offlineMaxDays": 60,
+   "absMaxDays": 90
+  },
+  "hook": {
+   "skewS": 60,
+   "delayS": 600,
+   "memMB": 1
+  },
+  "retention": {
+   "telemetryMaxDays": 730,
+   "diskShare": 0.3,
+   "audit_log": 730,
+   "rejected": 30
+  },
+  "geo": null,
+  "pseudonym": true
+ },
+ "qa": {
+  "ciBudgetS": 7.4,
+  "e2eMs": 1200,
+  "e2e": [
+   {
+    "path": "Показання лічильника води на картці",
+    "priority": 1
+   },
+   {
+    "path": "Тривога витоку: витрата понад 8 л/хв",
+    "priority": 2
+   },
+   {
+    "path": "Позачергове показання request_reading",
+    "priority": 3
+   },
+   {
+    "path": "Щомісячний звіт CSV",
+    "priority": 4
+   },
+   {
+    "path": "Пошук лічильника за адресою",
+    "priority": 5
+   }
+  ],
+  "flaky": {
+   "p": 0.0625,
+   "target": 0.01
+  },
+  "redMax": 0.03,
+  "suite": [
+   {
+    "test": "пакетний приймач 200 показань",
+    "p": 0.045
+   },
+   {
+    "test": "ідемпотентність request_reading",
+    "p": 0.03
+   },
+   {
+    "test": "пагінація історії",
+    "p": 0.025
+   },
+   {
+    "test": "округлення води до літра",
+    "p": 0.01
+   },
+   {
+    "test": "звіт CSV у кінці місяця",
+    "p": 0.008
+   }
+  ]
+ },
+ "ops": {
+  "slo": {
+   "target": 99.95,
+   "errors": [
+    0.02,
+    0.002
+   ]
+  },
+  "silenceMaxS": 4560,
+  "probe": {
+   "detectS": 120,
+   "startS": 15
+  }
+ }
+}

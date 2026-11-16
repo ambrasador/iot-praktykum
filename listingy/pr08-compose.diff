@@ -1,0 +1,24 @@
+--- compose.yaml
++++ compose.d0.yaml
+@@ -25,9 +25,20 @@
+     image: greenhouse-backend:1.0
+     init: true
+     # секрети розділу 6; файл .env не потрапляє ні в git, ні в образ
+-    env_file: .env
++    env_file:
++      - .env
++      - ../pr03/rt.env
+     environment:
+       MQTT_URL: mqtt://mosquitto:1883
++    # час між SIGTERM і SIGKILL: черга ПР6 встигає спорожніти
++    stop_grace_period: 25s
++    healthcheck:
++      test: [CMD, node, healthcheck.js]
++      interval: 14s
++      timeout: 3s
++      retries: 3
++      start_period: 9s
++      start_interval: 1s
+     volumes:
+       # файл SQLite переживає перестворення контейнера
+       - db:/data

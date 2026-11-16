@@ -1,0 +1,19 @@
+ // buildMessage: правила й знаки після коми беруться з опцій
+-  const { name, ttlSec = 600, nowMs = Date.now() } = opts;
+-  const r = RULES.get(alert.metric);
++  const { name, ttlSec = 600, nowMs = Date.now(), rules = RULES } = opts;
++  const r = rules.get(alert.metric);
+-  const value = alert.value.toFixed(1).replace('.', ',');
++  const value = alert.value.toFixed(r.decimals ?? 1).replace('.', ',');
+-        body: `${name}: ${value} ${r.unit}`,
++        body: `${name}: ${value}${r.unit ? ` ${r.unit}` : ''}`,
+
+ // createDispatcher: ті самі правила передаються в кожну спробу
+-  ttlSec = 600, maxAttempts = 5, log = () => {} }) {
++  ttlSec = 600, maxAttempts = 5, rules = RULES, log = () => {} }) {
+-        const opts = { name, ttlSec: left, nowMs };
++        const opts = { name, ttlSec: left, nowMs, rules };
+
+ // після RULES_D0 (PUSH_D0 додайте і в module.exports)
++// Строки доставки D0: TTL тривоги й найбільший вік події в tracker
++const PUSH_D0 = { rules: RULES_D0, ttlSec: 600, maxAgeMs: 595_000 };
