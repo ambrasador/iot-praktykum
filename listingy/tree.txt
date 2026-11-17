@@ -1,11 +1,12 @@
-praktykum/                    корінь: звідси запускають команди
+iot-praktykum/                корінь: звідси запускають команди
 ├── track.json                журнал рішень і чисел (init.mjs)
-├── kit/                      комплект перевірки (praktykum_kit.zip)
+├── kit/                      комплект перевірки
 │   ├── tools/                verify.mjs, track.mjs, api.mjs, …
 │   ├── lib/                  лабораторії й перевірки pr01…pr08
 │   ├── domains/              паспорти d0.json, v1.json … v5.json
 │   └── templates/            adr.md, pr01-ingest.extra.test.js
-├── greenhouse-monitor/       еталон підручника (kod_rozdilu7.zip)
+├── listingy/                 код лістингів із тексту практикуму
+├── greenhouse-monitor/       еталон підручника (клон)
 │   ├── core.js, metrics.js   ПР1: приймання, каталог метрик
 │   ├── mqtt-source.js        ПР1: корінь топіка (за потреби)
 │   ├── commands.js           ПР2: команди й налаштування

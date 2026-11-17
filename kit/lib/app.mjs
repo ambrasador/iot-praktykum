@@ -8,7 +8,7 @@ export { ROOT };
 export const APP = process.env.GM_APP ? path.resolve(process.env.GM_APP) : path.join(ROOT, 'greenhouse-monitor');
 
 if (!fs.existsSync(path.join(APP, 'package.json'))) {
-  console.error(`Немає застосунку в ${APP}. Розпакуйте kod_rozdilu7.zip у ${ROOT} і виконайте npm ci у greenhouse-monitor.`);
+  console.error(`Немає застосунку в ${APP}. Клонуйте https://github.com/ambrasador/greenhouse-monitor.git у ${ROOT} і виконайте npm ci у greenhouse-monitor.`);
   process.exit(2);
 }
 export const appRequire = createRequire(path.join(APP, 'package.json'));
